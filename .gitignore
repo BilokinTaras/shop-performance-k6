@@ -1,0 +1,16 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+# Secrets and generated state
+.env
+.env.*
+!.env.example
+.generated/
+*.pem
+*.key
+node_modules/
+results/
+*.tsbuildinfo
