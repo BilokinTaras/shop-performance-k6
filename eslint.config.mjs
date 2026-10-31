@@ -11,4 +11,9 @@ export default tseslint.config(
     rules: { '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }] },
   },
   { files: ['**/*.mjs'], ...tseslint.configs.disableTypeChecked },
+  {
+    // Node scripts; `document` is used inside Playwright's page.evaluate (browser context).
+    files: ['scripts/**/*.mjs'],
+    languageOptions: { globals: { process: 'readonly', console: 'readonly', document: 'readonly' } },
+  },
 );

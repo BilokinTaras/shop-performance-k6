@@ -1,0 +1,6 @@
+# Docs are hand-formatted; dashboards are vendored JSON from grafana.com.
+*.md
+monitoring/
+results/
+node_modules/
+package-lock.json

@@ -12,7 +12,9 @@ const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1600, height: 1000 }, deviceScaleFactor: 1 });
 await page.goto(`${base}/d/${uid}?orgId=1&from=${from}&to=${to}&kiosk${extra}`, { waitUntil: 'domcontentloaded' });
 // Panels load asynchronously; wait until no panel shows a loading indicator, then a moment for rendering.
-await page.waitForFunction(() => document.querySelectorAll('[aria-label="Panel loading bar"]').length === 0, null, { timeout: 60000 });
+await page.waitForFunction(() => document.querySelectorAll('[aria-label="Panel loading bar"]').length === 0, null, {
+  timeout: 60000,
+});
 await page.waitForTimeout(2500);
 await page.screenshot({ path: out, fullPage: true });
 await browser.close();

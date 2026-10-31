@@ -20,6 +20,10 @@ export const options: Options = {
   thresholds: {
     http_req_failed: [{ threshold: 'rate<0.05', abortOnFail: true, delayAbortEval: '30s' }],
     'http_req_duration{group:catalog}': [{ threshold: 'p(95)<3000', abortOnFail: true, delayAbortEval: '30s' }],
+    // k6 creates a sub-metric only for a threshold; these always-true ones keep per-group latency in the summary.
+    'http_req_duration{group:search}': ['max>=0'],
+    'http_req_duration{group:cart}': ['max>=0'],
+    'http_req_duration{group:checkout}': ['max>=0'],
   },
 };
 
