@@ -1,0 +1,7 @@
+apiVersion: 1
+providers:
+  - name: qa-dashboards
+    folder: QA Performance
+    type: file
+    allowUiUpdates: false
+    options: { path: /var/lib/grafana/dashboards }
