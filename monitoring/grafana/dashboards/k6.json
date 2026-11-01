@@ -1987,32 +1987,57 @@
         "type": "query"
       },
       {
+        "name": "quantile_stat",
+        "label": "Trend Metrics Query",
+        "description": "Trend statistic exported by k6 (K6_PROMETHEUS_RW_TREND_STATS in scripts/k6.sh)",
+        "type": "custom",
+        "query": "p95,p99,p90,p50,avg,min,max",
         "current": {
           "selected": true,
           "text": "p95",
           "value": "p95"
         },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "prometheus"
-        },
-        "definition": "metrics(k6_http_req_duration_)",
-        "description": "Statistic for Trend Metrics Queries. The available options depend on the values of the K6_PROMETHEUS_RW_TREND_STATS setting.",
+        "options": [
+          {
+            "selected": true,
+            "text": "p95",
+            "value": "p95"
+          },
+          {
+            "selected": false,
+            "text": "p99",
+            "value": "p99"
+          },
+          {
+            "selected": false,
+            "text": "p90",
+            "value": "p90"
+          },
+          {
+            "selected": false,
+            "text": "p50",
+            "value": "p50"
+          },
+          {
+            "selected": false,
+            "text": "avg",
+            "value": "avg"
+          },
+          {
+            "selected": false,
+            "text": "min",
+            "value": "min"
+          },
+          {
+            "selected": false,
+            "text": "max",
+            "value": "max"
+          }
+        ],
         "hide": 0,
-        "includeAll": false,
-        "label": "Trend Metrics Query",
         "multi": false,
-        "name": "quantile_stat",
-        "options": [],
-        "query": {
-          "query": "metrics(k6_http_req_duration_)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 2,
-        "regex": "/http_req_duration_(min|max|count|sum|avg|med|p[0-9]+)/g",
-        "skipUrlSync": false,
-        "sort": 2,
-        "type": "query"
+        "includeAll": false,
+        "skipUrlSync": false
       },
       {
         "datasource": {

@@ -5,7 +5,7 @@ import { type TestData, discover, shopper } from '../lib/journeys.ts';
 import { makeSummary } from '../lib/summary.ts';
 import { sloThresholds, summaryTrendStats } from '../lib/thresholds.ts';
 
-const rate = Number(__ENV.RATE ?? '8');
+const rate = Number(__ENV.RATE ?? '4');
 
 export const options: Options = {
   summaryTrendStats,
@@ -15,7 +15,7 @@ export const options: Options = {
       rate,
       timeUnit: '1s',
       duration: __ENV.DURATION ?? '30m',
-      preAllocatedVUs: rate * 4,
+      preAllocatedVUs: rate * 8,
       maxVUs: rate * 20,
     },
   },

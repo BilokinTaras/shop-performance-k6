@@ -45,8 +45,8 @@ exit with code **99** — the gate.
 | Scenario | Profile | Default | Short version used in checks |
 |---|---|---|---|
 | smoke | 1 VU, constant | 30 s | same |
-| load | ramp to `TARGET_RATE`, hold | 5 it/s, 1 m ramp + 8 m hold | 5 it/s, 20 s + 1 m |
-| stress | +`STEP_RATE` every `STEP_DURATION` up to `MAX_RATE` | 10 → 80 it/s, 2 m steps | 10 → 40, 30 s steps |
+| load | ramp to `TARGET_RATE`, hold | 5 it/s: 1 m ramp + 8.5 m hold + 30 s down = 10 m | 5 it/s, 20 s + 1 m |
+| stress | +`STEP_RATE` every `STEP_DURATION` up to `MAX_RATE` | 2 → 16 it/s in steps of 2, 1 m each (≈ 11 m) | 10 → 40, 30 s steps |
 | spike | `BASE_RATE`, ×10 for `SPIKE_DURATION`, back | 5 → 50 it/s, 1 m | 2 → 20, 30 s |
 | soak | constant `RATE` for `DURATION` | 4 it/s, 30 m | 4 it/s, 2 m |
 | breakpoint | ramp to `MAX_RATE`, abort when errors > 5 % or catalog p95 > 3 s | 200 it/s, 10 m | 60 it/s, 3 m |

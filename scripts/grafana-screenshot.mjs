@@ -16,6 +16,12 @@ await page.waitForFunction(() => document.querySelectorAll('[aria-label="Panel l
   timeout: 60000,
 });
 await page.waitForTimeout(2500);
-await page.screenshot({ path: out, fullPage: true });
+// CLIP_HEIGHT keeps only the top of a long dashboard (e.g. without panels that have no data source).
+const clipHeight = Number(process.env.CLIP_HEIGHT ?? '0');
+await page.screenshot(
+  clipHeight > 0
+    ? { path: out, fullPage: true, clip: { x: 0, y: 0, width: 1600, height: clipHeight } }
+    : { path: out, fullPage: true },
+);
 await browser.close();
 console.log(`grafana-screenshot: ${out}`);

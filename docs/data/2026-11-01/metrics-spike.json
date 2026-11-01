@@ -1,0 +1,99 @@
+{
+  "testid": "spike-20261101-022851",
+  "from": 1793492931,
+  "to": 1793493343,
+  "series": {
+    "k6_req_per_s": {
+      "avg": 19.781,
+      "max": 45.054
+    },
+    "k6_iter_per_s": {
+      "avg": 8.476,
+      "max": 27.406
+    },
+    "k6_dropped_iter_per_s": {
+      "avg": 17.696,
+      "max": 22.51
+    },
+    "k6_vus": {
+      "avg": 424.938,
+      "max": 1250
+    },
+    "k6_failed_ratio": {
+      "avg": 0.105,
+      "max": 0.214
+    },
+    "p95_catalog_ms": {
+      "avg": 15865.264,
+      "max": 27191.435
+    },
+    "p95_search_ms": {
+      "avg": 10131.129,
+      "max": 17253.772
+    },
+    "p95_cart_ms": {
+      "avg": 34608.62,
+      "max": 59998.42
+    },
+    "p95_checkout_ms": {
+      "avg": 33202.162,
+      "max": 59998.972
+    },
+    "cpu_cores:medusa": {
+      "avg": 1.114,
+      "max": 1.653
+    },
+    "cpu_cores:postgres": {
+      "avg": 0.293,
+      "max": 0.438
+    },
+    "cpu_cores:redis": {
+      "avg": 0.031,
+      "max": 0.051
+    },
+    "cpu_cores:storefront": {
+      "avg": 0.019,
+      "max": 0.036
+    },
+    "cpu_cores_k6": {
+      "avg": 0.039,
+      "max": 0.117
+    },
+    "mem_mib:medusa": {
+      "avg": 1122.237,
+      "max": 1587.16
+    },
+    "mem_mib:postgres": {
+      "avg": 119.696,
+      "max": 131.156
+    },
+    "mem_mib:redis": {
+      "avg": 7.858,
+      "max": 10.129
+    },
+    "mem_mib:storefront": {
+      "avg": 89.906,
+      "max": 92.18
+    },
+    "pg_connections": {
+      "avg": 10.639,
+      "max": 11
+    },
+    "pg_active": {
+      "avg": 0.241,
+      "max": 2
+    },
+    "pg_locks": {
+      "avg": 6.976,
+      "max": 39
+    },
+    "pg_commits_per_s": {
+      "avg": 778.516,
+      "max": 1044.6
+    },
+    "redis_ops_per_s": {
+      "avg": 874.452,
+      "max": 2216.178
+    }
+  }
+}

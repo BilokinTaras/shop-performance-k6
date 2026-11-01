@@ -27,6 +27,9 @@ export function makeSummary(name: string) {
         `failed ${fmt((metric(data, 'http_req_failed')?.rate ?? 0) * 100, 2)} % · ` +
         `checks ${fmt((metric(data, 'checks')?.rate ?? 0) * 100, 2)} % · ` +
         `orders ${fmt(metric(data, 'orders_placed')?.count)}`,
+      // Iterations k6 could not start on time (no free VU): offered load that never reached the shop.
+      `Iterations: ${fmt(metric(data, 'iterations')?.count)} completed · ` +
+        `${fmt(metric(data, 'dropped_iterations')?.count ?? 0)} dropped by the load generator`,
       '',
       '| Group | p50 ms | p90 ms | p95 ms | p99 ms | max ms |',
       '|---|---:|---:|---:|---:|---:|',

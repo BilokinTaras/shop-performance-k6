@@ -14,6 +14,11 @@ export default tseslint.config(
   {
     // Node scripts; `document` is used inside Playwright's page.evaluate (browser context).
     files: ['scripts/**/*.mjs'],
-    languageOptions: { globals: { process: 'readonly', console: 'readonly', document: 'readonly' } },
+    languageOptions: {
+      globals: {
+        ...Object.fromEntries(['process', 'console', 'fetch', 'URL', 'URLSearchParams'].map((g) => [g, 'readonly'])),
+        document: 'readonly',
+      },
+    },
   },
 );

@@ -6,9 +6,9 @@ import { type TestData, discover, shopper } from '../lib/journeys.ts';
 import { makeSummary } from '../lib/summary.ts';
 import { sloThresholds, summaryTrendStats } from '../lib/thresholds.ts';
 
-const step = Number(__ENV.STEP_RATE ?? '10');
-const max = Number(__ENV.MAX_RATE ?? '80');
-const stepDuration = __ENV.STEP_DURATION ?? '2m';
+const step = Number(__ENV.STEP_RATE ?? '2');
+const max = Number(__ENV.MAX_RATE ?? '16');
+const stepDuration = __ENV.STEP_DURATION ?? '1m';
 const stages = [];
 for (let rate = step; rate <= max; rate += step) {
   stages.push({ duration: '20s', target: rate }, { duration: stepDuration, target: rate });
@@ -22,7 +22,7 @@ export const options: Options = {
       executor: 'ramping-arrival-rate',
       startRate: 1,
       timeUnit: '1s',
-      preAllocatedVUs: 50,
+      preAllocatedVUs: max * 8,
       maxVUs: max * 25,
       stages,
     },

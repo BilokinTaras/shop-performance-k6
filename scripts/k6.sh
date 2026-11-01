@@ -15,7 +15,7 @@ abs() { (cd "$1" && (pwd -W 2>/dev/null || pwd)); }
 PROM_URL=${K6_PROMETHEUS_RW_SERVER_URL:-http://prometheus:9090/api/v1/write}
 OUTPUT="-o experimental-prometheus-rw"
 if [ "${NO_PROMETHEUS:-0}" = "1" ]; then OUTPUT=""; fi
-TESTID="${SCENARIO}-$(date +%Y%m%d-%H%M%S)"
+TESTID=${TESTID:-"${SCENARIO}-$(date +%Y%m%d-%H%M%S)"}
 mkdir -p results
 
 # shellcheck disable=SC2086
