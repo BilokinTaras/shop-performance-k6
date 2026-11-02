@@ -21,8 +21,9 @@ that found and removed the first bottleneck.
 
 ## Live reports
 
-Nightly runs with an HTML report on GitHub Pages arrive with publication (see Roadmap). Locally every run
-writes `results/<testid>-dashboard.html` (k6 web dashboard), a JSON and Markdown summary, and Grafana shows it
+**Nightly load run on GitHub Pages:** https://bilokintaras.github.io/shop-performance-k6/ — summary, environment
+and the k6 web dashboard (published by [`nightly.yml`](.github/workflows/nightly.yml) once it has run).
+Locally every run writes `results/<testid>-dashboard.html` (k6 web dashboard), a JSON and Markdown summary, and Grafana shows it
 live at http://localhost:3300. The full analysis: [docs/performance-test-report.md](docs/performance-test-report.md).
 
 ![Stress test, one process](docs/img/grafana-k6-stress.png)
@@ -127,9 +128,17 @@ different workload — see Roadmap).
 
 ## CI/CD
 
-Planned with publication: on pull requests — typecheck, lint and a smoke run against the shop started in
-the job; nightly — a 3–5 minute load run with `THRESHOLD_SCALE` for the shared runner, its HTML report
-published to GitHub Pages. The gate is k6's own exit code: 0 passes, 99 means an SLO was breached.
+| Workflow | When | What runs |
+|---|---|---|
+| [`pr.yml`](.github/workflows/pr.yml) | every PR and push to `main` | `tsc`, ESLint, Prettier; then a 30-second smoke against a shop started by the shared [`start-sut`](https://github.com/BilokinTaras/shop-sut/tree/main/.github/actions/start-sut) action — **the thresholds are the gate**: k6 exits 99 on a breached SLO and the job fails |
+| [`nightly.yml`](.github/workflows/nightly.yml) | daily 03:41 UTC, manual | about four minutes at 5 journeys/s on a fresh shop, environment recorded, summary and k6 web dashboard published to Pages |
+
+**Why CI numbers are not the analysis.** A shared GitHub runner runs the shop, its database and k6 on two
+vCPUs next to other tenants, so its latency is noisy and lower than the laptop's capacity. CI therefore
+doubles the latency limits (`THRESHOLD_SCALE=2`) and keeps the error-rate and check thresholds as they are:
+it catches regressions — a change that makes the shop much slower or starts failing requests — while the
+capacity, bottleneck and experiment work stays local, in [the performance report](docs/performance-test-report.md).
+Third-party actions are pinned to commit SHAs; `actionlint` and `zizmor` report nothing.
 
 ## How-to
 
@@ -181,7 +190,8 @@ listed above; the raw summaries, exports and screenshots are in the repository.
 
 ## Roadmap & known limitations
 
-- CI on GitHub Actions and nightly reports on Pages (needs the GitHub repository).
+- The workflows pass `actionlint`, `zizmor` and Prettier locally but have not run on GitHub yet.
+- The nightly page shows the latest run only; a trend across nights is not kept yet.
 - Load generator and shop share one laptop; results compare changes on the same stand, not production capacity.
 - The catalog has 7 products; a larger seeded catalog would change search and paging costs.
 - Cluster mode was tested up to 16 journeys/s; its ceiling is still to be found.

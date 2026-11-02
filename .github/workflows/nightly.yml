@@ -1,0 +1,97 @@
+name: Nightly load
+
+# A short load run (5 journeys/s for about four minutes) against a fresh shop, published to GitHub Pages.
+# It catches regressions — a change that makes the shop much slower or starts failing requests — and nothing
+# more: a shared runner is not a performance lab, so the real analysis stays local (docs/performance-test-report.md).
+on:
+  schedule:
+    - cron: '41 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+jobs:
+  load:
+    name: short load run
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Start the shop
+        uses: BilokinTaras/shop-sut/.github/actions/start-sut@main # zizmor: ignore[unpinned-uses] same owner; switches to the release tag
+        with:
+          image-tag: main
+
+      - name: Record the environment
+        run: |
+          mkdir -p results
+          sh scripts/record-env.sh > results/environment.md
+
+      - name: k6 load, 5 it/s
+        id: load
+        env:
+          NO_PROMETHEUS: '1'
+        run: sh scripts/k6.sh load -e TARGET_RATE=5 -e RAMP=30s -e HOLD=3m -e THRESHOLD_SCALE=2
+
+      - name: Build the Pages site
+        if: always()
+        env:
+          OUTCOME: ${{ steps.load.outcome }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          mkdir -p site
+          dashboard=$(find results -name 'load-*-dashboard.html' | sort | tail -1)
+          if [ -n "$dashboard" ]; then cp "$dashboard" site/dashboard.html; fi
+          cp results/load-latest.md site/summary.md 2>/dev/null || true
+          cp results/environment.md site/environment.md
+          {
+            echo '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+            echo '<meta name="viewport" content="width=device-width,initial-scale=1">'
+            echo '<title>shop-performance-k6 · nightly</title>'
+            echo '<style>body{font:15px/1.5 system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem}'
+            echo 'pre{background:#f4f4f4;padding:1rem;overflow:auto}</style></head><body>'
+            echo "<h1>Nightly load run — $(date -u +%Y-%m-%d)</h1>"
+            echo "<p>Result: <strong>$OUTCOME</strong> · <a href=\"$RUN_URL\">workflow run</a></p>"
+            echo '<p><a href="dashboard.html">k6 web dashboard (per-period latency, throughput)</a></p>'
+            echo '<p>Shared CI runners are noisy: latency limits are doubled here and the numbers are for spotting'
+            echo 'regressions, not for capacity planning. The local analysis is in the repository.</p>'
+            echo '<h2>Summary</h2><pre>'
+            sed 's/&/\&amp;/g; s/</\&lt;/g' site/summary.md 2>/dev/null || echo 'no summary'
+            echo '</pre><h2>Environment</h2><pre>'
+            sed 's/&/\&amp;/g; s/</\&lt;/g' site/environment.md
+            echo '</pre></body></html>'
+          } > site/index.html
+          cat site/summary.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        if: always()
+        with:
+          path: site
+
+      - name: Stand logs on failure
+        if: failure()
+        uses: BilokinTaras/shop-sut/.github/actions/collect-sut-logs@main # zizmor: ignore[unpinned-uses] same owner
+
+  publish:
+    name: Publish to Pages
+    needs: load
+    if: always() && needs.load.result != 'cancelled'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
