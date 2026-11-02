@@ -17,6 +17,10 @@ OUTPUT="-o experimental-prometheus-rw"
 if [ "${NO_PROMETHEUS:-0}" = "1" ]; then OUTPUT=""; fi
 TESTID=${TESTID:-"${SCENARIO}-$(date +%Y%m%d-%H%M%S)"}
 mkdir -p results
+# The k6 image runs as its own user (k6, uid 12345). On Docker Desktop bind mounts are writable by any
+# container user; on a Linux CI runner they keep the host owner, and k6 fails to write the summary and the
+# dashboard with "permission denied" while the run itself still passes. The directory holds only results.
+chmod 777 results
 
 # shellcheck disable=SC2086
 docker run --rm --network "$(val SUT_DOCKER_NETWORK)" \

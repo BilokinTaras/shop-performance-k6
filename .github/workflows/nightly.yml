@@ -70,6 +70,10 @@ jobs:
             echo '</pre></body></html>'
           } > site/index.html
           cat site/summary.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          # k6 reports a failed summary write only in its log; a green run must not publish an empty page.
+          for f in site/summary.md site/dashboard.html; do
+            [ -s "$f" ] || { echo "::error title=k6 results::$f is missing — k6 could not write results/"; exit 1; }
+          done
 
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         if: always()
