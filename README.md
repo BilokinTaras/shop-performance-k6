@@ -72,9 +72,10 @@ commands run on Linux and Docker Desktop for macOS.
 ## Quick start
 
 Prerequisites: Docker with Compose v2, GNU Make, Node.js ≥ 22 (only for typecheck, lint and the helper
-scripts). macOS: `brew install node`. The shop comes from the sibling repository `shop-sut`.
+scripts). macOS: `brew install node`. The shop comes from the sibling repository [`shop-sut`](https://github.com/BilokinTaras/shop-sut).
 
 ```bash
+git clone https://github.com/BilokinTaras/shop-sut.git ../shop-sut   # the shop lives in its own repository, next to this one
 make -C ../shop-sut up          # the shop; writes ../shop-sut/.generated/sut.env
 make monitoring-up              # Prometheus, Grafana on http://localhost:3300 (admin / qa-local-grafana)
 npm ci && make check            # types, lint, format
@@ -197,3 +198,7 @@ container image), cAdvisor (Apache-2.0), postgres_exporter (Apache-2.0), redis_e
 Dashboards in `monitoring/grafana/dashboards/` are from grafana.com — k6 Prometheus (ID 19665), cAdvisor
 exporter (14282), PostgreSQL Database (9628), Redis Dashboard (763) — with the data source pinned and
 defaults changed; their authors keep their rights.
+
+---
+
+Part of a QA portfolio: [shop-sut](https://github.com/BilokinTaras/shop-sut) (the shop under test) · [shop-e2e-playwright](https://github.com/BilokinTaras/shop-e2e-playwright) (UI and API end-to-end) · [shop-api-pytest](https://github.com/BilokinTaras/shop-api-pytest) (API depth) · **shop-performance-k6** (performance) · [devsecops-quality-gates](https://github.com/BilokinTaras/devsecops-quality-gates) (security pipeline)
