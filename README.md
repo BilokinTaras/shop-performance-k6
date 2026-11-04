@@ -4,7 +4,7 @@ Performance tests for the **Medusa** Store API with an explicit workload model, 
 a monitoring stack that correlates latency with container resources, and a measured before/after experiment
 that found and removed the first bottleneck.
 
-![k6](https://img.shields.io/badge/k6-2.3.0-7D64FF) ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6) ![Prometheus](https://img.shields.io/badge/Prometheus-3.15-E6522C) ![Grafana](https://img.shields.io/badge/Grafana-13.3-F46800) ![Medusa](https://img.shields.io/badge/Medusa-2.22.2-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
+[![PR checks](https://github.com/BilokinTaras/shop-performance-k6/actions/workflows/pr.yml/badge.svg)](https://github.com/BilokinTaras/shop-performance-k6/actions/workflows/pr.yml) [![Nightly load](https://github.com/BilokinTaras/shop-performance-k6/actions/workflows/nightly.yml/badge.svg)](https://github.com/BilokinTaras/shop-performance-k6/actions/workflows/nightly.yml) ![k6](https://img.shields.io/badge/k6-2.3.0-7D64FF) ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6) ![Prometheus](https://img.shields.io/badge/Prometheus-3.15-E6522C) ![Grafana](https://img.shields.io/badge/Grafana-13.3-F46800) ![Medusa](https://img.shields.io/badge/Medusa-2.22.2-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 ## In 30 seconds
 
@@ -22,7 +22,11 @@ that found and removed the first bottleneck.
 ## Live reports
 
 **Nightly load run on GitHub Pages:** https://bilokintaras.github.io/shop-performance-k6/ — summary, environment
-and the k6 web dashboard (published by [`nightly.yml`](.github/workflows/nightly.yml) once it has run).
+and the k6 web dashboard (published by [`nightly.yml`](.github/workflows/nightly.yml)). Latest scheduled run,
+2026-11-03, a 30 s ramp and 3 minutes at 5 journeys/s on a shared runner with latency limits doubled: **gate PASS, 2567 requests,
+0.00 % failed, catalog p95 158 ms, checkout p95 938 ms**
+([run 41626584712](https://github.com/BilokinTaras/shop-performance-k6/actions/runs/41626584712)) — numbers for spotting
+regressions between nights, not for capacity.
 Locally every run writes `results/<testid>-dashboard.html` (k6 web dashboard), a JSON and Markdown summary, and Grafana shows it
 live at http://localhost:3300. The full analysis: [docs/performance-test-report.md](docs/performance-test-report.md).
 
@@ -147,6 +151,7 @@ Third-party actions are pinned to commit SHAs; `actionlint` and `zizmor` report 
 | Change the load | `sh scripts/k6.sh load -e TARGET_RATE=8 -e HOLD=5m` (knobs are listed in each scenario file) |
 | Relax thresholds for a slow runner | `sh scripts/k6.sh load -e THRESHOLD_SCALE=2` |
 | Run without Prometheus | `NO_PROMETHEUS=1 sh scripts/k6.sh smoke` |
+| Grafana fails on Windows with "ports are not available … 3300" | Windows reserves port ranges at boot (`netsh int ipv4 show excludedportrange protocol=tcp`); pick a free port: `GRAFANA_PORT=3400 make monitoring-up` |
 | See a run in Grafana | Dashboard "k6 Prometheus", pick the run in **Test ID** |
 | Export a run's resource metrics | `node scripts/export-metrics.mjs <testid> <from-unix> <to-unix>` |
 | Per-step stress table | `node scripts/stress-steps.mjs results/<testid>-dashboard.html results/metrics-<testid>.csv` |
@@ -190,7 +195,6 @@ listed above; the raw summaries, exports and screenshots are in the repository.
 
 ## Roadmap & known limitations
 
-- The workflows pass `actionlint`, `zizmor` and Prettier locally but have not run on GitHub yet.
 - The nightly page shows the latest run only; a trend across nights is not kept yet.
 - Load generator and shop share one laptop; results compare changes on the same stand, not production capacity.
 - The catalog has 7 products; a larger seeded catalog would change search and paging costs.
@@ -198,7 +202,7 @@ listed above; the raw summaries, exports and screenshots are in the repository.
 - 30-minute soak only: Medusa memory grew from ~745 to ~800 MiB after warm-up — a multi-hour soak is needed
   to rule out a slow leak.
 - Grafana latency panels are cumulative (OBS-1); switching k6 to native histograms is the planned fix.
-- Verified on Windows 11 x86_64 with Docker Desktop; macOS arm64 and Linux runs pending.
+- Verified on Windows 11 x86_64 with Docker Desktop and on Linux in CI (GitHub-hosted Ubuntu runners); macOS arm64 is still pending.
 
 ## Licence and credits
 
